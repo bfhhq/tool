@@ -15,7 +15,7 @@ import (
 var serviceType = flag.Int("service", 0, "service type, 0 Paas, 1 Saas")
 var isPrivate = flag.Bool("private", false, "private file")
 
-var commands = []string{"config", "query", "delete", "upload"}
+var commands = []string{"config", "query", "delete", "upload", "download"}
 
 var fileName, localFilePath string
 
@@ -135,8 +135,43 @@ func main() {
 
 		err = baofengcloud.UploadFile2(conf, baofengcloud.ServiceType(*serviceType),
 			fileType, args[2], args[1], "", "")
-	}
 
+	} else if action == "download" {
+
+		if len(args) < 2 {
+			fmt.Println("please specify a name")
+			return
+		}
+
+		fileInfo, err = baofengcloud.QueryFile(conf, baofengcloud.ServiceType(*serviceType), args[1], "")
+		if fileInfo.Status != 0 {
+			fmt.Println("file not exit or not ready. status = ", fileInfo.Status)
+			return
+		}
+
+		fileInfo2, err := baofengcloud.QueryCdn(conf, fileInfo.Url, fileInfo.FileId)
+		if err == nil {
+
+			if fileInfo.ServiceType == baofengcloud.Paas {
+
+				for _, url := range fileInfo2.Urls {
+					fmt.Println(url)
+				}
+
+			} else if fileInfo.ServiceType == baofengcloud.Saas {
+				for _, resp := range fileInfo2.Representations {
+					fmt.Printf("%s %dx%d\r\n", resp.Resolution, resp.Width, resp.Height)
+					for _, url := range resp.Urls {
+						fmt.Println(url)
+					}
+				}
+
+			}
+
+			return
+		}
+
+	}
 	if err != nil {
 		fmt.Println(err)
 		return
