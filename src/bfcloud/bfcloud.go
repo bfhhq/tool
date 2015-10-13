@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/bfhhq/baofengcloud-go-sdk/src/baofengcloud"
+	"github.com/baofengcloud/go-sdk/src/baofengcloud"
 	"io/ioutil"
 	"os"
 	"os/user"
