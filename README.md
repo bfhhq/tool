@@ -20,6 +20,11 @@ $bfcloud upload test.mp4 c:\test.mp4
 $bfcloud -service 1 -private upload test.mp4 c:\test.mp4
 ```
 
+下载视频
+
+```shell
+$bfcloud download test.mp4 
+```
 
 查询
 
